@@ -162,7 +162,6 @@ with open(hiddenD+'/'+audit_log, "w") as reader:
 	pass
 
 
-		
 
 #########################################################
 # AGENTE DE ENGAÑO: monitoriza todos los eventos en el sistema de ficheros

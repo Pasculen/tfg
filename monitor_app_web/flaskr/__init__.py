@@ -32,9 +32,6 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    @app.route("/hello")
-    def hello():
-        return "Hello, World!"
 
     # register the database commands
     from flaskr import db
@@ -42,9 +39,8 @@ def create_app(test_config=None):
     db.init_app(app)
 
     # apply the blueprints to the app
-    from flaskr import auth, blog
+    from flaskr import blog
 
-    app.register_blueprint(auth.bp)
     app.register_blueprint(blog.bp)
 
     # make url_for('index') == url_for('blog.index')
@@ -56,15 +52,7 @@ def create_app(test_config=None):
 
     # socket-reading thread
     def thread_job():
-        ######BORRAR ESTO
-        #conn = connect(os.path.join(app.instance_path, "flaskr.sqlite")) 
-        #curs = conn.cursor()
-        #curs.execute("SELECT * FROM user;")
-        #with open('/home/tfg2/Escritorio/hola.txt', "w") as writer:
-        #    for (username) in curs.fetchall():
-        #        writer.write(str(username))
-        #
-        ###########################
+
         import OpenSSL
         from OpenSSL.SSL import TLSv1_2_METHOD, FILETYPE_PEM, VERIFY_FAIL_IF_NO_PEER_CERT
         import socket
@@ -96,7 +84,6 @@ def create_app(test_config=None):
         conn_ini = OpenSSL.SSL.Connection(context, soc)
 
         
-
         # Accept client onnection
         while 1:
             conn, addr = conn_ini.accept()
