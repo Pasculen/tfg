@@ -243,8 +243,7 @@ def agent():
 			elif 'IN_CLOSE_NOWRITE' in type_names:
 				# copiar dir
 				if create==1 and 'IN_ISDIR' in type_names:						
-					os.system("cp -r {} {}".format(source, destiny)) 
-					print ("cp -r {} {}".format(source, destiny))
+					os.system("cp -r {} {}".format(source, destiny)) 					
 					conn.write("DIRECTORIO '{}'\tCREADO en la ruta {}\n".format(filename, source))
 					create = 0
 
