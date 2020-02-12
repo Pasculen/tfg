@@ -32,7 +32,7 @@ audit_log = '.audit.log'
 ###############################################
 #COMPROBAR USUARIO EXISTE
 if len(sys.argv) < 4 or sys.argv[2] != '-ip':
-	print('Número de argumentos incorrecto.\nSigue el siguiente esquema: ./demonio username -ip IP,PORT [-s kill,execve,etc] [--restart]')
+	print('Número de argumentos incorrecto.\nSigue el siguiente esquema: ./agente username -ip IP,PORT [-s kill,execve,etc] [--restart]')
 	os._exit(0)
 
 usuario = sys.argv[1]
@@ -206,7 +206,7 @@ def agent():
 			destiny = hiddenD+path.split(usuario)[1]+"/"+filename
 
 			#BORRAR, ES PARA PRUEBA
-			if "flask" in path:
+			if "instance" in path:
 				pass
 
 			# AUDITD LOG HANDLING
