@@ -93,11 +93,18 @@ def create_app(test_config=None):
             while 1:
                 try:
                     data = conn.read(1024)
+
                     # Connect to the flask database
                     conn_db = connect(os.path.join(app.instance_path, "flaskr.sqlite")) 
                     curs = conn_db.cursor()
                     evidencias = data.decode().split('\n')
                     for e in evidencias:
+                        if e != '' and "_rule" in e:
+                            e = e.split('. ')[1]
+                            e = "AUDITD: "+e
+                        elif e != '':
+                            e = "INOTIFY: "+e
+
                         if e != '':
                             curs.execute("INSERT INTO evidence (body) VALUES (?);",
                                 [e],

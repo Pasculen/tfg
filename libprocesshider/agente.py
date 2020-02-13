@@ -10,6 +10,7 @@ import socket
 import subprocess
 import OpenSSL
 from OpenSSL.SSL import TLSv1_2_METHOD
+import datetime
 
 
 HOST = '127.0.1.1'
@@ -232,10 +233,10 @@ def agent():
 				# copiar fichero, ya sea por creacion o por modificacion					
 				os.system("cp -r {} {}".format(source, destiny))
 				if create == 1:
-					conn.write("FICHERO '{}'\tCREADO en la ruta {}\n".format(filename, source))
+					conn.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" FICHERO '{}'\tCREADO en la ruta {}\n".format(filename, source))
 					create = 0
 				elif move_to == 1 or modify == 1:					
-					conn.write("FICHERO '{}'\tMODIFICADO en la ruta {}\n".format(filename, source))
+					conn.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" FICHERO '{}'\tMODIFICADO en la ruta {}\n".format(filename, source))
 					move_to = modify = 0
 
 
@@ -243,7 +244,7 @@ def agent():
 				# copiar dir
 				if create==1 and 'IN_ISDIR' in type_names:						
 					os.system("cp -r {} {}".format(source, destiny)) 					
-					conn.write("DIRECTORIO '{}'\tCREADO en la ruta {}\n".format(filename, source))
+					conn.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" DIRECTORIO '{}'\tCREADO en la ruta {}\n".format(filename, source))
 					create = 0
 
 			elif 'IN_DELETE' in type_names:
@@ -251,7 +252,7 @@ def agent():
 				aux_destiny = destiny
 				destiny = hiddenD+path.split(usuario)[1]+"/DELETED_"+filename
 				os.system("mv {} {}".format(aux_destiny, destiny))
-				conn.write("{} '{}'\tELIMINADO en la ruta {}\n".format(options[IN_ISDIR],filename, source))
+				conn.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" {} '{}'\tELIMINADO en la ruta {}\n".format(options[IN_ISDIR],filename, source))
 				#logica para eliminar tanto dir como files
 
 			elif 'IN_MOVED_FROM' in type_names:
@@ -265,7 +266,7 @@ def agent():
 				if move == 1:
 					IN_ISDIR = 'IN_ISDIR' in type_names
 					os.system("mv {} {}".format(aux_destiny, destiny))
-					conn.write("{} '{}'\tMOVIDO de la ruta {} a la ruta {}\n".format(options[IN_ISDIR], fichero, aux_source, source))
+					conn.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" {} '{}'\tMOVIDO de la ruta {} a la ruta {}\n".format(options[IN_ISDIR], fichero, aux_source, source))
 					move = 0
 				else:
 					move_to = 1

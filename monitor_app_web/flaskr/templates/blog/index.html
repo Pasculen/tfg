@@ -7,14 +7,8 @@
 {% block content %}
   {% for post in posts %}
     <article class="post">
-      <header>
-        <div>
-          <h1>{{ post['id'] }}</h1>
-          
-        </div>
-        
-      </header>
-      <p class="body">{{ post['body'] }}</p>
+      <!--<h1>{{ post['id'] }}</h1>-->
+      <p class="body">{{ post['id'] }}. {{ post['body'] }}</p>
     </article>
     {% if not loop.last %}
       <hr>

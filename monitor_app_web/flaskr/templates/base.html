@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <nav>
   <h1><a href="{{ url_for('index') }}">Linux Deception System</a></h1>
+  <button onclick="myFunction()">Autorefresh</button>
 </nav>
 <section class="content">
   <header>
@@ -12,4 +13,10 @@
     <div class="flash">{{ message }}</div>
   {% endfor %}
   {% block content %}{% endblock %}
+
+  <script>
+    function myFunction() {
+      setInterval(function(){window.location.reload(1);}, 2000);
+    }
+  </script>
 </section>
