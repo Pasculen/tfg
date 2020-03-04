@@ -30,10 +30,12 @@ audit_log = '.audit.log'
 
 
 
+
 ###############################################
 #COMPROBAR USUARIO EXISTE
 if len(sys.argv) < 4 or sys.argv[2] != '-ip':
-	print('Número de argumentos incorrecto.\nSigue el siguiente esquema: ./agente username -ip IP,PORT [-s kill,execve,etc] [--restart]')
+	print('Número de argumentos incorrecto.\n'
+		'Sigue el siguiente esquema: ./agente username -ip IP,PORT [-s kill,execve,etc] [--restart]')
 	os._exit(0)
 
 usuario = sys.argv[1]
@@ -41,10 +43,29 @@ if not os.path.isdir('/home/'+usuario):
 	print("El usuario '{}' NO existe. Prueba con otro.".format(usuario))
 	os._exit(0)
 
+###############################################
+#COMPROBAR QUE EL ACTIVO EXISTE
+if not os.path.isfile('/home/'+usuario+'/credenciales/credenciales.txt'):
+	print('EL ACTIVO DE ENGAÑO NO EXISTE. Por favor créalo.')
+	os._exit(0)
 
 ip_port = sys.argv[3].split(',')
 HOST = ip_port[0]
 PORT = int(ip_port[1])
+
+
+
+###############################################
+#BUCLE INFINITO PARA LA ACTIVACION DEL ACTIVO
+i = inotify.adapters.Inotify()
+i.add_watch('/home/'+usuario+'/credenciales')
+
+for event in i.event_gen(yield_nones=False):
+    (_, type_names, path, filename) = event
+
+    if filename == 'credenciales.txt' and path == '/home/'+usuario+'/credenciales':
+    	break
+
 
 
 ################################################
@@ -52,6 +73,7 @@ PORT = int(ip_port[1])
 if not os.path.isfile('/etc/hola'):
 	os.system("touch /etc/hola")
 os.system("chmod 600 /etc/hola")
+
 
 
 #################################################
@@ -96,6 +118,7 @@ def restart_auditd():
 			'distribute_network = no\n')
 
 	os.system('touch /home/'+usuario+'/'+audit_log)
+	os.system('chmod 600 /home/'+usuario+'/'+audit_log)
 	with open('/etc/audit/rules.d/audit.rules', "w") as audit_rules:
 		audit_rules.write('## First rule - delete all\n'
 			'-D\n\n'
@@ -145,22 +168,13 @@ os.system("echo /usr/local/lib/libprocesshider.so >> /etc/ld.so.preload")
 ##############################################
 #ESTRUCTURACION DIRECTORIO DE EVIDENCIAS
 hiddenD = "/etc/dpkg/origins/..."
-"""os.system("mkdir {}".format(hiddenD))
-os.system("mkdir {}/Descargas".format(hiddenD))
-os.system("mkdir {}/Escritorio".format(hiddenD))
-os.system("mkdir {}/Música".format(hiddenD))
-os.system("mkdir {}/Público".format(hiddenD))
-os.system("mkdir {}/Documentos".format(hiddenD))
-os.system("mkdir {}/Imágenes".format(hiddenD))
-os.system("mkdir {}/Plantillas".format(hiddenD))
-os.system("mkdir {}/Vídeos".format(hiddenD))"""
+
 if not os.path.isdir(hiddenD):
 	os.system("mkdir "+hiddenD)
+
 hiddenD = hiddenD+'/'+usuario
 os.system("cp -r /home/{} {}".format(usuario, hiddenD))
 os.system("chmod 600 "+hiddenD)
-with open(hiddenD+'/'+audit_log, "w") as reader:
-	pass
 
 
 
