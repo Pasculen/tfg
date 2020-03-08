@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-
 import daemon
 import inotify.adapters
 import os
@@ -18,25 +17,22 @@ PORT = 1234
 audit_log = '.audit.log'
 
 
-#Funcion demonio
-#def daemonTask():
-	#i = inotify.adapters.InotifyTree('/home/tfg/Escritorio')
-	#print(os.getpid())
-	#for event in i.event_gen(yield_nones=False):
-	#	(_, type_names, path, filename) = event
-		#logFile.write("{}: {} [{}]\n".format(type_names, path, filename))
-		#print("{}: {} [{}]".format(type_names, path, filename))
-		#print(event)
+###############################################
+#COMPILACION E INSERCION LIBRERIA DINAMICA
+if len(sys.argv) == 2 and sys.argv[1] == '-make':
+	os.system("make")
+	os.system("mv libprocesshider.so /usr/local/lib/")
+	if not os.path.isfile("/etc/ld.so.preload"):
+		os.system("echo /usr/local/lib/libprocesshider.so >> /etc/ld.so.preload")
+
+###############################################
+#COMPROBAR QUE EL ACTIVO EXISTE
+if not os.path.isfile('/home/'+argv[1]+'/credenciales/credenciales.txt'):
+	print('EL ACTIVO DE ENGAÑO NO EXISTE. Por favor créalo.')
+	os._exit(0)
 
 
 def agent():
-
-	###############################################
-	#COMPILACION E INSERCION LIBRERIA DINAMICA
-	os.system("make")
-	os.system("mv libprocesshider.so /usr/local/lib/")
-	os.system("echo /usr/local/lib/libprocesshider.so >> /etc/ld.so.preload")
-
 	###############################################
 	#COMPROBAR USUARIO EXISTE
 	if len(sys.argv) < 4 or sys.argv[2] != '-ip':
@@ -49,16 +45,9 @@ def agent():
 		print("El usuario '{}' NO existe. Prueba con otro.".format(usuario))
 		os._exit(0)
 
-	###############################################
-	#COMPROBAR QUE EL ACTIVO EXISTE
-	if not os.path.isfile('/home/'+usuario+'/credenciales/credenciales.txt'):
-		print('EL ACTIVO DE ENGAÑO NO EXISTE. Por favor créalo.')
-		os._exit(0)
-
 	ip_port = sys.argv[3].split(',')
 	HOST = ip_port[0]
 	PORT = int(ip_port[1])
-
 
 
 	###############################################
@@ -73,13 +62,11 @@ def agent():
 	    	break
 
 
-
 	################################################
 	#CREACION FICHERO PARA COMPROBAR USUARIO ROOT CON is_sudo de processhider.c
 	if not os.path.isfile('/etc/hola'):
 		os.system("touch /etc/hola")
 	os.system("chmod 600 /etc/hola")
-
 
 
 	#################################################
