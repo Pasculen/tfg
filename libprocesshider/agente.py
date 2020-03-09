@@ -74,7 +74,8 @@ def agent():
 	# Funcion para reiniciar y reconfigurar auditd
 	def restart_auditd():
 		os.system('systemctl stop auditd')
-		os.system('rm /home/'+usuario+'/'+audit_log)
+		if os.path.isfile('/home/'+usuario+'/'+audit_log):
+			os.system('rm /home/'+usuario+'/'+audit_log)
 		with open('/etc/audit/auditd.conf', "w") as audit_conf:
 			audit_conf.write ('#\n# This file controls the configuration of the audit daemon\n#\n'
 				'local_events = yes\n'
@@ -162,6 +163,9 @@ def agent():
 	os.system("cp -r /home/{} {}".format(usuario, hiddenD))
 	os.system("chmod 600 "+hiddenD)
 
+	if not os.path.isfile(hiddenD+'/auditd.txt'):
+		os.system('touch '+hiddenD+'/auditd.txt')
+
 
 
 	#########################################################
@@ -188,10 +192,14 @@ def agent():
 	aux_source = ""
 	IN_ISDIR = 0
 	flag_aux = 0
+	old = ""
 
 	options = {0:"FICHERO", 1:"DIRECTORIO"}
+	
+	content_aux = 'Key Report\n===============================================\n# date time key success exe auid event\n===============================================\n'
 
-	content_aux = '# date time key success exe auid event\n===============================================\n'
+	with open(hiddenD+'/auditd.txt', "w") as writer:
+		writer.write(content_aux)
 
 	for event in i.event_gen(yield_nones=False):
 		(extra_info, type_names, path, filename) = event				
@@ -215,14 +223,17 @@ def agent():
 				p = subprocess.Popen(cmd_aureport, shell=True, stdout=subprocess.PIPE)
 				content = p.stdout.read().decode()
 
-				lista_aux = content.split(content_aux)
-				if len(lista_aux) > 1 and lista_aux[1] != '':
-					res = lista_aux[1]
-					try:
-						conn.write(res)
-					except OpenSSL.SSL.SysCallError as e:
-						pass	
-					content_aux = res
+				lista_aux = content.split('\n')
+
+				with open(hiddenD+'/auditd.txt', "r") as reader:
+					old = reader.read()
+
+				with open(hiddenD+'/auditd.txt', "a") as writer:
+					for e in lista_aux:
+						if e not in old:
+							conn.write(e)
+							writer.write(e)
+
 
 			# REST OF FILESYSTEM HANDLING
 			elif 'IN_CREATE' in type_names:
@@ -276,5 +287,5 @@ def agent():
 
 #############################################################
 # DEMONIZACION
-with daemon.DaemonContext(stdin=sys.stdin, stdout=sys.stdout):
-	agent()
+#with daemon.DaemonContext(stdin=sys.stdin, stdout=sys.stdout):
+agent()

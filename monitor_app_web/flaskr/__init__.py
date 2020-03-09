@@ -98,14 +98,22 @@ def create_app(test_config=None):
                     conn_db = connect(os.path.join(app.instance_path, "flaskr.sqlite")) 
                     curs = conn_db.cursor()
                     evidencias = data.decode().split('\n')
-                    for e in evidencias:
-                        if e != '' and "_rule" in e:
-                            e = e.split('. ')[1]
-                            e = "AUDITD: "+e
-                        elif e != '':
-                            e = "INOTIFY: "+e
 
+                    for e in evidencias:
                         if e != '':
+                            if "_rule" in e:
+                                e = e.split('. ')[1]
+                                e = "AUDITD: "+e
+
+                                query = 'SELECT * FROM evidence WHERE body="{}";'.format(e)
+                                curs.execute(query)
+                                rows = curs.fetchall()
+                                res = len(rows)
+                                if res == 1:
+                                    continue
+                            else:
+                                e = "INOTIFY: "+e
+
                             curs.execute("INSERT INTO evidence (body) VALUES (?);",
                                 [e],
                                 )
