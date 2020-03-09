@@ -19,15 +19,16 @@ audit_log = '.audit.log'
 
 ###############################################
 #COMPILACION E INSERCION LIBRERIA DINAMICA
-if len(sys.argv) == 2 and sys.argv[1] == '-make':
+if len(sys.argv) == 3 and sys.argv[2] == '-make':
 	os.system("make")
 	os.system("mv libprocesshider.so /usr/local/lib/")
 	if not os.path.isfile("/etc/ld.so.preload"):
 		os.system("echo /usr/local/lib/libprocesshider.so >> /etc/ld.so.preload")
+	os._exit(0)
 
 ###############################################
 #COMPROBAR QUE EL ACTIVO EXISTE
-if not os.path.isfile('/home/'+argv[1]+'/credenciales/credenciales.txt'):
+if not os.path.isfile('/home/'+sys.argv[1]+'/credenciales/credenciales.txt'):
 	print('EL ACTIVO DE ENGAÑO NO EXISTE. Por favor créalo.')
 	os._exit(0)
 
