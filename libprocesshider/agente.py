@@ -219,8 +219,8 @@ def agent():
 			# AUDITD LOG HANDLING
 			elif filename == audit_log and 'IN_MODIFY' in type_names:
 
-				cmd_aureport = "aureport -k"
-				p = subprocess.Popen(cmd_aureport, shell=True, stdout=subprocess.PIPE)
+				cmd_aureport_k = "aureport -k"
+				p = subprocess.Popen(cmd_aureport_k, shell=True, stdout=subprocess.PIPE)
 				content = p.stdout.read().decode()
 
 				lista_aux = content.split('\n')
@@ -231,6 +231,14 @@ def agent():
 				with open(hiddenD+'/auditd.txt', "a") as writer:
 					for e in lista_aux:
 						if e not in old:
+							eventid = e.split(' ')[-1]
+							cmd_aureport_u = "aureport -u | grep "+eventid
+							p2 = subprocess.Popen(cmd_aureport_u, shell=True, stdout=subprocess.PIPE)
+							content2 = p2.stdout.read().decode()
+
+							if content2 != '':
+								e = e + ' ' + content2.split(' ')[5]
+
 							conn.write(e)
 							writer.write(e)
 
