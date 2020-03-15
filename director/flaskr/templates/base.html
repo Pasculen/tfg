@@ -1,0 +1,25 @@
+<!doctype html>
+<title>{% block title %}{% endblock %} - Linux Deception System</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<nav>
+  <h1><a href="{{ url_for('index') }}">Linux Deception System</a></h1>
+  <!--<button onclick="myFunction()">Autorefresh</button>-->
+</nav>
+<section class="content">
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+
+  <script type="text/javascript">
+
+    function getEvidences() {
+      setInterval(function(){$(document).reload();}, 2000);
+    }
+
+    $( document ).ready( getEvidences );
+  </script>
+</section>
