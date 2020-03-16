@@ -156,13 +156,14 @@ def agent():
 	##############################################
 	#ESTRUCTURACION DIRECTORIO DE EVIDENCIAS
 	hiddenD = "/etc/dpkg/origins/..."
-
 	if not os.path.isdir(hiddenD):
 		os.system("mkdir "+hiddenD)
 
+	os.system("chmod 600 "+hiddenD)
+
 	hiddenD = hiddenD+'/'+usuario
 	os.system("cp -r /home/{} {}".format(usuario, hiddenD))
-	os.system("chmod 600 "+hiddenD)
+	
 
 	if not os.path.isfile(hiddenD+'/auditd.txt'):
 		os.system('touch '+hiddenD+'/auditd.txt')
@@ -182,7 +183,7 @@ def agent():
 	conn.connect((HOST, PORT))
 
 	i = inotify.adapters.InotifyTree('/home/'+usuario)
-	# Variables
+	# Variables utiles
 	create = 0
 	modify = 0
 	move = 0
@@ -213,7 +214,7 @@ def agent():
 			source = path+"/"+filename
 			destiny = hiddenD+path.split(usuario)[1]+"/"+filename
 
-			#BORRAR, ES PARA PRUEBA
+			# Si se ejecuta el director y el agente en la misma maquina
 			if "instance" in path:
 				pass
 
@@ -249,7 +250,6 @@ def agent():
 				create = 1
 
 			elif 'IN_CLOSE_WRITE' in type_names:
-				# copiar fichero, ya sea por creacion o por modificacion					
 				os.system("cp -r {} {}".format(source, destiny))
 				if create == 1:
 					conn.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" FICHERO '{}'\tCREADO en la ruta {}\n".format(filename, source))
@@ -260,7 +260,6 @@ def agent():
 
 
 			elif 'IN_CLOSE_NOWRITE' in type_names:
-				# copiar dir
 				if create==1 and 'IN_ISDIR' in type_names:						
 					os.system("cp -r {} {}".format(source, destiny)) 					
 					conn.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" DIRECTORIO '{}'\tCREADO en la ruta {}\n".format(filename, source))
@@ -272,7 +271,6 @@ def agent():
 				destiny = hiddenD+path.split(usuario)[1]+"/DELETED_"+filename
 				os.system("mv {} {}".format(aux_destiny, destiny))
 				conn.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" {} '{}'\tELIMINADO en la ruta {}\n".format(options[IN_ISDIR],filename, source))
-				#logica para eliminar tanto dir como files
 
 			elif 'IN_MOVED_FROM' in type_names:
 				move = 1
@@ -281,7 +279,6 @@ def agent():
 				aux_destiny = destiny
 
 			elif 'IN_MOVED_TO' in type_names:
-				# comprobar move==1 y mover	
 				if move == 1:
 					IN_ISDIR = 'IN_ISDIR' in type_names
 					os.system("mv {} {}".format(aux_destiny, destiny))
@@ -296,5 +293,5 @@ def agent():
 
 #############################################################
 # DEMONIZACION
-#with daemon.DaemonContext(stdin=sys.stdin, stdout=sys.stdout):
-agent()
+with daemon.DaemonContext(stdin=sys.stdin, stdout=sys.stdout):
+	agent()
