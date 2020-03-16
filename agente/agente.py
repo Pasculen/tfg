@@ -29,7 +29,8 @@ if len(sys.argv) == 3 and sys.argv[2] == '-make':
 ###############################################
 #COMPROBAR QUE EL ACTIVO EXISTE
 if not os.path.isfile('/home/'+sys.argv[1]+'/credenciales/credenciales.txt'):
-	print('EL ACTIVO DE ENGAÑO NO EXISTE. Por favor créalo.')
+	print('EL ACTIVO DE ENGAÑO NO EXISTE. Por favor créalo:\n')
+	print('Crea el fichero /home/USUARIO/credenciales/credenciales.txt')
 	os._exit(0)
 
 
